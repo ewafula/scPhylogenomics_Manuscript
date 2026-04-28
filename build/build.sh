@@ -22,7 +22,6 @@ manubot process \
   --content-directory=content \
   --output-directory=output \
   --cache-directory=ci/cache \
-  --skip-citations=false \
   --log-level=INFO
 
 # 2. Render outputs via pandoc.
