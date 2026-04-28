@@ -15,7 +15,7 @@ only the manuscript and its build pipeline.
 
 ## Where things are
 
-```
+```text
 content/                 ← Markdown sections, numbered for Manubot ordering
   metadata.yaml          ← title, authors, affiliations, keywords
   manual-references.json ← citations Manubot can't fetch by ID
@@ -37,6 +37,7 @@ OPEN_QUESTIONS.md        ← unresolved scientific/editorial questions
 2. Skim `OPEN_QUESTIONS.md` and `SUBMISSION_CHECKLIST.md`.
 3. `git log -- content/` shows what changed last.
 4. Copy the template:
+
    ```bash
    cp sessions/_TEMPLATE.md "sessions/$(date +%Y-%m-%d).md"
    ```

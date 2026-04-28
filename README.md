@@ -13,7 +13,7 @@ from 10x Genomics single‑cell RNA‑seq data.
 
 ## Repository layout
 
-```
+```text
 content/                 ← Markdown sections (numbered for Manubot)
   00.front-matter.md     ← Editorial summary, abstract, key references
   01.introduction.md     ← Introduction, Development, Overview, Applications, Comparison
