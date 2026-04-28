@@ -19,14 +19,11 @@ jobs:
             content/*.md
             *.md
 
-  spellcheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run cspell
-        uses: streetsidesoftware/cspell-action@v6
-        with:
-          files: |
-            content/*.md
-          incremental_files_only: false
+  # Spell-checking with cspell was removed: a protocol manuscript in
+  # single-cell genomics / phylogenetics carries hundreds of domain terms
+  # (e.g., "transcriptomic", "phylogenomics", "aneuploidy", "barcodes",
+  # tool names like "FASTA", "GATK", "SECEDO") and maintaining a
+  # word-list adds churn without catching real typos.
+  #
+  # If you want to re-enable it later, paste the block back below and
+  # extend `cspell.json` with the project's vocabulary.
