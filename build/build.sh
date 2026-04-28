@@ -18,10 +18,15 @@ cd "$ROOT_DIR"
 mkdir -p output
 
 # 1. Process content/ into a single Markdown file with citation metadata.
+#    `--skip-citations` is REQUIRED in Manubot 0.6+; it tells the process
+#    command not to fetch citation metadata at this stage (pandoc will
+#    resolve citations later using output/references.json built from
+#    content/manual-references.json and the cache).
 manubot process \
   --content-directory=content \
   --output-directory=output \
   --cache-directory=ci/cache \
+  --skip-citations \
   --log-level=INFO
 
 # 2. Render outputs via pandoc.
