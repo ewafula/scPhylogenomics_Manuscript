@@ -1,0 +1,15 @@
+[
+  {
+    "id": "url:https://github.com/ewafula/scPhylogenomics",
+    "type": "webpage",
+    "title": "scPhylogenomics — modular workflow for single-cell phylogenomics",
+    "URL": "https://github.com/ewafula/scPhylogenomics",
+    "author": [
+      { "family": "Wafula", "given": "Eric K." },
+      { "family": "Dawdi", "given": "Prabin" },
+      { "family": "Miura", "given": "Sayaka" }
+    ],
+    "issued": { "date-parts": [[ 2025 ]] },
+    "note": "Software repository hosting the workflow described in this protocol."
+  }
+]

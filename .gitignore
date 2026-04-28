@@ -1,0 +1,36 @@
+# Manubot build outputs
+output/
+ci/cache/
+ci/log/
+
+# Python / conda
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local Office artefacts
+~$*
+*.docx.bak
+
+# ---------------------------------------------------------------------------
+# Local-only working materials — never pushed to GitHub
+# ---------------------------------------------------------------------------
+
+# Original Word working draft (kept locally for reference; content is being
+# migrated into content/*.md).
+scPhylogenomics_protocol_manuscript_working_draft.docx
+
+# Session notes ("lab notebook") and any local question/checklist drafts.
+# These are personal continuity files — not part of the manuscript.
+sessions/
+
+# Any other Word/PDF working drafts dropped into the repo root
+/*.docx
+/*.pdf

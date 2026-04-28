@@ -1,0 +1,71 @@
+name: Manubot
+
+# Build the manuscript on every push/PR to `main`, and publish the
+# rendered HTML/PDF to the `gh-pages` branch when `main` is updated.
+#
+# Inspired by the upstream Manubot rootstock workflow:
+# https://github.com/manubot/rootstock/blob/main/.github/workflows/manubot.yaml
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to push to gh-pages
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Miniforge
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          activate-environment: manubot
+          environment-file: build/environment.yml
+          auto-update-conda: false
+          use-mamba: true
+
+      - name: Show tool versions
+        shell: bash -el {0}
+        run: |
+          python --version
+          pandoc --version | head -n 1
+          manubot --version
+
+      - name: Build manuscript (HTML + PDF + DOCX)
+        shell: bash -el {0}
+        env:
+          BUILD_DOCX: "true"
+          MANUBOT_USE_DOCKER: "false"
+        run: bash build/build.sh
+
+      - name: Upload manuscript artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: manuscript
+          path: |
+            output/manuscript.html
+            output/manuscript.pdf
+            output/manuscript.docx
+          if-no-files-found: warn
+
+      - name: Deploy to gh-pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
+          keep_files: false
+          commit_message: "Deploy ${{ github.sha }} to gh-pages"

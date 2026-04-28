@@ -1,0 +1,49 @@
+# Manuscript metadata used by Manubot.
+# See https://github.com/manubot/rootstock/blob/main/content/metadata.yaml for
+# the canonical schema and additional fields.
+
+title: >-
+  Single-cell phylogenomics from scRNA-seq SNPs using scPhylogenomics:
+  an end-to-end workflow for clonal tumor evolution analysis
+
+# Optional running header for Nature Protocols
+header: scPhylogenomics protocol
+
+keywords:
+  - single-cell RNA-seq
+  - tumor phylogenomics
+  - clonal evolution
+  - SNV calling
+  - cellsnp-lite
+  - phylogenetics
+  - protocol
+
+lang: en-US
+
+authors:
+  - github: ewafula
+    name: Eric K. Wafula
+    initials: EKW
+    orcid: 0000-0000-0000-0000        # TODO: replace with real ORCID
+    email: ewafula@gmail.com
+    affiliations:
+      - Department of Biology, The University of Mississippi, University, MS 38677, USA
+    funders:
+      - TODO
+
+  - name: Prabin Dawdi
+    initials: PD
+    orcid: 0000-0000-0000-0000        # TODO
+    affiliations:
+      - Department of Biology, The University of Mississippi, University, MS 38677, USA
+
+  - name: Sayaka Miura
+    initials: SM
+    orcid: 0000-0000-0000-0000        # TODO
+    email: smiura@olemiss.edu
+    affiliations:
+      - Department of Biology, The University of Mississippi, University, MS 38677, USA
+    corresponding: true
+
+# When `manubot process` runs, the build adds:
+#   date_long, date_short, generated_at, manubot_version, ci, etc.

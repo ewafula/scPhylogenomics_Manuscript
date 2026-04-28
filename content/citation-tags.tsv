@@ -1,0 +1,15 @@
+## Citation tag aliases.
+## Format: <tag><TAB><citation-id>
+## Example:
+##   soupx	doi:10.1093/gigascience/giaa151
+##   doubletfinder	doi:10.1016/j.cels.2019.03.003
+##   miqc	doi:10.1371/journal.pcbi.1009290
+##   seurat	doi:10.1038/s41587-023-01767-y
+##   singler	doi:10.1038/s41590-018-0276-y
+##   copykat	doi:10.1038/s41587-020-00795-2
+##   cellsnp-lite	doi:10.1093/bioinformatics/btab358
+##   fasttree	doi:10.1371/journal.pone.0009490
+##   iqtree	doi:10.1093/molbev/msaa015
+##   snpmanifold	pmcid:PMC12465888
+## Add real tags below as the manuscript text grows. Until then this file
+## is intentionally empty so Manubot does not error.

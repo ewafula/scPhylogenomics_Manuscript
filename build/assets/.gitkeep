@@ -1,0 +1,6 @@
+# Place build assets here:
+#   - style.csl       -> Citation Style Language file (Nature Protocols).
+#                        Download from https://github.com/citation-style-language/styles
+#                        and save as `nature-protocols.csl` (or symlink to style.csl).
+#   - reference.docx  -> Optional reference Word doc for `pandoc -t docx`.
+#   - thumbnail.png   -> Optional social/preview image.

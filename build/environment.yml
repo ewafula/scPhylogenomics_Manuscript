@@ -1,0 +1,18 @@
+name: manubot
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pandoc>=3.1
+  - pip
+  - weasyprint
+  - pip:
+      - manubot==0.6.2
+      - pandoc-fignos==2.4.0
+      - pandoc-tablenos==2.3.0
+      - pandoc-eqnos==2.5.0
+      - pandoc-xnos==2.5.0
+      - jinja2
+      - pyyaml
+      - requests
