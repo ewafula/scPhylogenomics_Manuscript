@@ -8,7 +8,7 @@ dependencies:
   - pip
   - weasyprint
   - pip:
-      - manubot==0.6.2
+      - manubot==0.6.1
       - pandoc-fignos==2.4.0
       - pandoc-tablenos==2.3.0
       - pandoc-eqnos==2.5.0
