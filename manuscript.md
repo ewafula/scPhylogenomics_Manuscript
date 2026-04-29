@@ -28,8 +28,8 @@ header-includes: |
   <meta name="dc.date" content="2026-04-29" />
   <meta name="citation_publication_date" content="2026-04-29" />
   <meta property="article:published_time" content="2026-04-29" />
-  <meta name="dc.modified" content="2026-04-29T00:51:52+00:00" />
-  <meta property="article:modified_time" content="2026-04-29T00:51:52+00:00" />
+  <meta name="dc.modified" content="2026-04-29T01:07:38+00:00" />
+  <meta property="article:modified_time" content="2026-04-29T01:07:38+00:00" />
   <meta name="dc.language" content="en-US" />
   <meta name="citation_language" content="en-US" />
   <meta name="dc.relation.ispartof" content="Manubot" />
@@ -51,9 +51,9 @@ header-includes: |
   <meta name="citation_fulltext_html_url" content="https://ewafula.github.io/scPhylogenomics_Manuscript/" />
   <meta name="citation_pdf_url" content="https://ewafula.github.io/scPhylogenomics_Manuscript/manuscript.pdf" />
   <link rel="alternate" type="application/pdf" href="https://ewafula.github.io/scPhylogenomics_Manuscript/manuscript.pdf" />
-  <link rel="alternate" type="text/html" href="https://ewafula.github.io/scPhylogenomics_Manuscript/v/c1bcd2e0f52d39ed91a4e98099484a5d0da7c434/" />
-  <meta name="manubot_html_url_versioned" content="https://ewafula.github.io/scPhylogenomics_Manuscript/v/c1bcd2e0f52d39ed91a4e98099484a5d0da7c434/" />
-  <meta name="manubot_pdf_url_versioned" content="https://ewafula.github.io/scPhylogenomics_Manuscript/v/c1bcd2e0f52d39ed91a4e98099484a5d0da7c434/manuscript.pdf" />
+  <link rel="alternate" type="text/html" href="https://ewafula.github.io/scPhylogenomics_Manuscript/v/11add032f54ca127667782209398c5c8eb38b78e/" />
+  <meta name="manubot_html_url_versioned" content="https://ewafula.github.io/scPhylogenomics_Manuscript/v/11add032f54ca127667782209398c5c8eb38b78e/" />
+  <meta name="manubot_pdf_url_versioned" content="https://ewafula.github.io/scPhylogenomics_Manuscript/v/11add032f54ca127667782209398c5c8eb38b78e/manuscript.pdf" />
   <meta property="og:type" content="article" />
   <meta property="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/png" sizes="192x192" href="https://manubot.org/favicon-192x192.png" />
@@ -70,10 +70,18 @@ manubot-clear-requests-cache: false
 
 <!--
 This file is part of the scPhylogenomics protocol manuscript.
-Manubot will inject the title, authors, affiliations, and metadata defined in
-content/metadata.yaml directly above this file at build time. Anything written
-here renders *after* the title block.
+Manubot injects the title from content/metadata.yaml above this file at
+build time. The visible author/affiliation block below is hand-written
+because pandoc's default HTML template does not render Manubot's
+structured `authors:` field. Keep this block in sync with
+content/metadata.yaml.
 -->
+
+**Eric K. Wafula^1^, Prabin Dawdi^1^, Sayaka Miura^1,\*^**
+
+^1^Department of Biology, The University of Mississippi, University, MS 38677, USA
+
+^\*^Correspondence: <smiura@olemiss.edu>
 
 ## Editorial summary {.page_break_before}
 
