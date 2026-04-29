@@ -63,9 +63,11 @@ guidance and the journal's submission portal.
 
 - [ ] `bash build/build.sh` runs to completion locally on a clean conda
       env.
-- [ ] GitHub Actions Manubot workflow is green on `main`.
-- [ ] gh-pages site renders the latest manuscript.
-- [ ] Lint workflow (markdownlint + cspell) is green.
+- [x] GitHub Actions Manubot workflow is green on `main`.
+- [x] gh-pages site renders the latest manuscript
+      (<https://ewafula.github.io/scPhylogenomics_Manuscript/>).
+- [x] Lint workflow (markdownlint) is green. *(cspell removed; too noisy
+      for genomics vocabulary.)*
 - [ ] All `TODO` markers in `content/` resolved.
 
 ## Pre-submission review
