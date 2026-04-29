@@ -28,8 +28,8 @@ header-includes: |
   <meta name="dc.date" content="2026-04-29" />
   <meta name="citation_publication_date" content="2026-04-29" />
   <meta property="article:published_time" content="2026-04-29" />
-  <meta name="dc.modified" content="2026-04-29T01:07:38+00:00" />
-  <meta property="article:modified_time" content="2026-04-29T01:07:38+00:00" />
+  <meta name="dc.modified" content="2026-04-29T01:59:44+00:00" />
+  <meta property="article:modified_time" content="2026-04-29T01:59:44+00:00" />
   <meta name="dc.language" content="en-US" />
   <meta name="citation_language" content="en-US" />
   <meta name="dc.relation.ispartof" content="Manubot" />
@@ -51,9 +51,9 @@ header-includes: |
   <meta name="citation_fulltext_html_url" content="https://ewafula.github.io/scPhylogenomics_Manuscript/" />
   <meta name="citation_pdf_url" content="https://ewafula.github.io/scPhylogenomics_Manuscript/manuscript.pdf" />
   <link rel="alternate" type="application/pdf" href="https://ewafula.github.io/scPhylogenomics_Manuscript/manuscript.pdf" />
-  <link rel="alternate" type="text/html" href="https://ewafula.github.io/scPhylogenomics_Manuscript/v/11add032f54ca127667782209398c5c8eb38b78e/" />
-  <meta name="manubot_html_url_versioned" content="https://ewafula.github.io/scPhylogenomics_Manuscript/v/11add032f54ca127667782209398c5c8eb38b78e/" />
-  <meta name="manubot_pdf_url_versioned" content="https://ewafula.github.io/scPhylogenomics_Manuscript/v/11add032f54ca127667782209398c5c8eb38b78e/manuscript.pdf" />
+  <link rel="alternate" type="text/html" href="https://ewafula.github.io/scPhylogenomics_Manuscript/v/d58a288d3e68ca0797904dc905e01c21cd6b2f02/" />
+  <meta name="manubot_html_url_versioned" content="https://ewafula.github.io/scPhylogenomics_Manuscript/v/d58a288d3e68ca0797904dc905e01c21cd6b2f02/" />
+  <meta name="manubot_pdf_url_versioned" content="https://ewafula.github.io/scPhylogenomics_Manuscript/v/d58a288d3e68ca0797904dc905e01c21cd6b2f02/manuscript.pdf" />
   <meta property="og:type" content="article" />
   <meta property="twitter:card" content="summary_large_image" />
   <link rel="icon" type="image/png" sizes="192x192" href="https://manubot.org/favicon-192x192.png" />
@@ -781,8 +781,8 @@ writing — review & editing.
 
 ## Acknowledgements {.page_break_before}
 
-> **TODO** — funding sources, MSK SPECTRUM consortium acknowledgement,
-> Mississippi MAGIC HPC.
+> **TODO** — funding sources, acknowledgements,
+> Mississippi Center for Supercomputing Research (MCSR) at Ole Miss.
 
 ## Competing interests {.page_break_before}
 
