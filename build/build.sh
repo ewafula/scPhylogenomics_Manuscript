@@ -34,17 +34,19 @@ PANDOC_OPTS=(
   --from=markdown
   --to=html
   --standalone
-  --self-contained
+  --embed-resources
   --katex
   --csl=build/assets/style.csl
   --bibliography=output/references.json
-  --filter=pandoc-fignos
-  --filter=pandoc-tablenos
-  --filter=pandoc-eqnos
   --metadata=link-citations:true
   --output=output/manuscript.html
   output/manuscript.md
 )
+# NOTE: pandoc-fignos/tablenos/eqnos filters were removed because the
+# upstream pandoc-xnos package does not yet support pandoc 3.2+. To
+# re-enable cross-referencing once the manuscript has real figures and
+# tables, switch to pandoc-crossref (active development, conda-forge
+# package `pandoc-crossref`) and add `--filter=pandoc-crossref` here.
 pandoc "${PANDOC_OPTS[@]}"
 
 # PDF via wkhtmltopdf (faster than LaTeX) — fall back to weasyprint if missing.
