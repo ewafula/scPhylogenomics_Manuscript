@@ -5,11 +5,16 @@ Manubot source for the protocol article describing the
 a modular, containerized pipeline that infers clonal tumor evolution
 from 10x Genomics single‑cell RNA‑seq data.
 
-| Output | Latest build |
-|---|---|
-| HTML  | `output/manuscript.html`  (CI artifact and `gh-pages` site) |
-| PDF   | `output/manuscript.pdf`   (CI artifact) |
-| DOCX  | `output/manuscript.docx`  (CI artifact when `BUILD_DOCX=true`) |
+| Output | Live build (deployed from `main`) | Per-run artifact |
+|---|---|---|
+| HTML | [manuscript.html](https://ewafula.github.io/scPhylogenomics_Manuscript/manuscript.html) | [Actions → latest run](https://github.com/ewafula/scPhylogenomics_Manuscript/actions/workflows/manubot.yaml) |
+| PDF  | [manuscript.pdf](https://ewafula.github.io/scPhylogenomics_Manuscript/manuscript.pdf) | [Actions → latest run](https://github.com/ewafula/scPhylogenomics_Manuscript/actions/workflows/manubot.yaml) |
+| DOCX | [manuscript.docx](https://ewafula.github.io/scPhylogenomics_Manuscript/manuscript.docx) | [Actions → latest run](https://github.com/ewafula/scPhylogenomics_Manuscript/actions/workflows/manubot.yaml) |
+
+The "Live build" links serve the most recent successful build of `main` from
+the `gh-pages` branch. The "Per-run artifact" link goes to the Actions tab,
+where every run (including PRs) attaches the rendered files as downloadable
+artifacts.
 
 ## Repository layout
 
