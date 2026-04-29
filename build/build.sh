@@ -49,6 +49,23 @@ PANDOC_OPTS=(
 # package `pandoc-crossref`) and add `--filter=pandoc-crossref` here.
 pandoc "${PANDOC_OPTS[@]}"
 
+# Write a tiny index.html that redirects "/" to manuscript.html so the
+# GitHub Pages site root resolves cleanly without a 404.
+cat > output/index.html <<'EOF'
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>scPhylogenomics protocol — manuscript</title>
+    <meta http-equiv="refresh" content="0; url=manuscript.html">
+    <link rel="canonical" href="manuscript.html">
+  </head>
+  <body>
+    <p>Redirecting to <a href="manuscript.html">the manuscript</a>…</p>
+  </body>
+</html>
+EOF
+
 # PDF via wkhtmltopdf (faster than LaTeX) — fall back to weasyprint if missing.
 if command -v weasyprint >/dev/null 2>&1; then
   weasyprint output/manuscript.html output/manuscript.pdf
