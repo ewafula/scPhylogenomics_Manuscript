@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-US">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Eric K. Wafula" />
+  <meta name="author" content="Prabin Dawdi" />
+  <meta name="author" content="Sayaka Miura" />
+  <meta name="dcterms.date" content="2026-04-29" />
+  <meta name="keywords" content="single-cell RNA-seq, tumor
+phylogenomics, clonal evolution, SNV
+calling, cellsnp-lite, phylogenetics, protocol" />
+  <title>Single-cell phylogenomics from scRNA-seq SNPs using scPhylogenomics: an end-to-end workflow for clonal tumor evolution analysis</title>
+  <style>
+
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
+}
+body {
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
+}
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
+}
+h1 {
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+svg {
+height: auto;
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+white-space: pre-wrap;
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+border: none;
+border-top: 1px solid #1a1a1a;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+}
+.hanging-indent div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+} </style>
+  <!--
+  Manubot generated metadata rendered from header-includes-template.html.
+  Suggest improvements at https://github.com/manubot/manubot/blob/main/manubot/process/header-includes-template.html
+  -->
+  <meta name="dc.format" content="text/html" />
+  <meta property="og:type" content="article" />
+  <meta name="dc.title" content="Single-cell phylogenomics from scRNA-seq SNPs using scPhylogenomics: an end-to-end workflow for clonal tumor evolution analysis" />
+  <meta name="citation_title" content="Single-cell phylogenomics from scRNA-seq SNPs using scPhylogenomics: an end-to-end workflow for clonal tumor evolution analysis" />
+  <meta property="og:title" content="Single-cell phylogenomics from scRNA-seq SNPs using scPhylogenomics: an end-to-end workflow for clonal tumor evolution analysis" />
+  <meta property="twitter:title" content="Single-cell phylogenomics from scRNA-seq SNPs using scPhylogenomics: an end-to-end workflow for clonal tumor evolution analysis" />
+  <meta name="dc.date" content="2026-04-29" />
+  <meta name="citation_publication_date" content="2026-04-29" />
+  <meta property="article:published_time" content="2026-04-29" />
+  <meta name="dc.modified" content="2026-04-29T00:14:43+00:00" />
+  <meta property="article:modified_time" content="2026-04-29T00:14:43+00:00" />
+  <meta name="dc.language" content="en-US" />
+  <meta name="citation_language" content="en-US" />
+  <meta name="dc.relation.ispartof" content="Manubot" />
+  <meta name="dc.publisher" content="Manubot" />
+  <meta name="citation_journal_title" content="Manubot" />
+  <meta name="citation_technical_report_institution" content="Manubot" />
+  <meta name="citation_author" content="Eric K. Wafula" />
+  <meta name="citation_author_institution" content="Department of Biology, The University of Mississippi, University, MS 38677, USA" />
+  <meta name="citation_author_orcid" content="0000-0000-0000-0000" />
+  <meta name="citation_author" content="Prabin Dawdi" />
+  <meta name="citation_author_institution" content="Department of Biology, The University of Mississippi, University, MS 38677, USA" />
+  <meta name="citation_author_orcid" content="0000-0000-0000-0000" />
+  <meta name="citation_author" content="Sayaka Miura" />
+  <meta name="citation_author_institution" content="Department of Biology, The University of Mississippi, University, MS 38677, USA" />
+  <meta name="citation_author_orcid" content="0000-0000-0000-0000" />
+  <link rel="canonical" href="https://ewafula.github.io/scPhylogenomics_Manuscript/" />
+  <meta property="og:url" content="https://ewafula.github.io/scPhylogenomics_Manuscript/" />
+  <meta property="twitter:url" content="https://ewafula.github.io/scPhylogenomics_Manuscript/" />
+  <meta name="citation_fulltext_html_url" content="https://ewafula.github.io/scPhylogenomics_Manuscript/" />
+  <meta name="citation_pdf_url" content="https://ewafula.github.io/scPhylogenomics_Manuscript/manuscript.pdf" />
+  <link rel="alternate" type="application/pdf" href="https://ewafula.github.io/scPhylogenomics_Manuscript/manuscript.pdf" />
+  <link rel="alternate" type="text/html" href="https://ewafula.github.io/scPhylogenomics_Manuscript/v/027c47fd43ac9902acf4d2c253e77356541294dc/" />
+  <meta name="manubot_html_url_versioned" content="https://ewafula.github.io/scPhylogenomics_Manuscript/v/027c47fd43ac9902acf4d2c253e77356541294dc/" />
+  <meta name="manubot_pdf_url_versioned" content="https://ewafula.github.io/scPhylogenomics_Manuscript/v/027c47fd43ac9902acf4d2c253e77356541294dc/manuscript.pdf" />
+  <meta property="og:type" content="article" />
+  <meta property="twitter:card" content="summary_large_image" />
+  <link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAACoFBMVEWtFFetFVjFWIjWiqvUg6a9QnjEV4eyI2LrxdX//////v7cmrfcm7fqxNWyImHjsMbPdp3Pd53jr8a+Rnvy2eTy2uW+RXrpv9L+/P3ovtHCT4H25e3BToHsydjZk7LalLPsyNfGXIr67/SyJGLGW4quFljx1uLVh6nWiKrx1uHKZpL46/GxH1/JZZGuGFrz3efSfqPSf6PNb5iwG1zNbpivGlz14+vPdZzQeJ/04OmvGVrQeJ6xHl736e/MbJawHV7TgqXx2OOuF1nTgaX68PTIYY7IYo/57fKyIWDWi6zv0d7v0t+zJWP68fXGXYvHXozalbPrxtbsytm2Lmn8+PrBTH/dnrrpwNLOc5vy2+XhqcK9Q3npwdPdnbm4M239+vy+RHnls8ngp8Dmt8z89vi7O3O7PHPmuMy6OnL+/f67PXSwHF27PXXkscfircTen7reoLvjrsX++/y5Nm/LaZS9QXfnu87fpL63MWzfpb7nus7BTYD9+fq3MGvv0N2vGlvASX3rx9falrTbl7Xcm7jDU4T79fi1KmfDUoPuz93ZkbH47PG1LGi2LWnZkrHuztzCUILCUYKzJmTOcpr78/a2L2q8P3b14uvRfKHMbZfz3uexIGDKZ5LqwtTJZJDhqsLhqMHforzLa5XLapTJY5C/SX379Pe6OHG6OXH14urw1ODmtsvRe6HReqDFWYjirMTltcrw1eHnuc3uzdvbmLXbmbbKaJPDVITEVYX57vP46vDIYI60KWbz3Oa8PnXEVoa3MWvgpr/QeZ/x1+P04enOdJztytm8QHfNcJn36O+5N3DSfaLVhqnXja3ty9rYj6/YkLDqw9TASn79+fu4Mm3ovM/fo73ks8jkssi/R3u/SHy1K2f68vbXjK3UhKftzNv9OcSiAAAAAWJLR0QJ8dml7AAAAAd0SU1FB+MJCxMeKHmBrPAAAAgLSURBVHja7Vz7ewxXGD4bglmCtqFpg1TSRYgIcQ0J0tzaklJBLqySFIvSRkrc4taIVkskhCKtSutaRVvXqraoFkWVXvXyr3R3dr8zl905M7szZ/Lkeb73F/GdOe/3vbNnzpx5z+wSgkAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBCINgBHVLv20eYootu36+Borfo7dhIEwdnZRH5HF6eXIqZrKwnoJojoHjnDY36Gx1un/iec/vSxkVP08DM4e7aKgCf92YW4iMeQIy5A8VRr1P90ILkQHzlHPHD0agUBvSF5n8g5EoDjGfvr7wu5EztGTpKUCCzP2l2/qx+k7m+GZgCwJLtsFjAQMg9KMUOTMgh4Bttbf+oQSJxmjmgo8AxJtVXAMDoFpZsjSqcT0XA76x8xEtKOMkvVHZhGjrBRwGjIOibDLFXGGOAaa1/94zIhaZZ5sizgyhxvm4AJkHNitnmy7Fhge86u+pNyIGWuFXR5wJZfYJOA5yHjC5Y8ijheBL529tQ/aTIkLLSG8CXgy0myRcAUyDfVKsaXgTHBjvqnFUG66VZRTgfGomk2CJgB2WYqwtnFMSWlZUYIykpLYoqV09cs4JzNv373nEAu5yvysGuuLzbHwLSUJxLMVaw+ewaeToU5bu4C5sHJKleEh/uDFa/q9Z9fEWrpswBY5/GufyE8xnoWKeIwCJIXs/sv7hdyAC7xBMJxCzkLeA1O1VJlfCLEl7H7v05v4sr4GxDvxrf+aBislcuVDXQ9IFSx+lfRw1RmzPJKuLTe5CpgBeRfqWqQBORUa3evztESQFZBw2qe9a+BLGvXaQoQatZrdR9RI2gKWLcWWjZwFLARknRRt8gECJu0um8WtAWQt6BlI7/6ayHHljqWAGff0N37OlkC6iqgaSuv+h1vQ4p3gtrkAoRt74bq/l6+wBJAtkPTDl5+O8vLUggQOoV40MmeKrAFcHe5mF6WUkCoIwYIOgK4u1xML0slwFOvPmCnR1cAZ5eL7WWpBAjxDcr2hnhBVwBnl4vtZakFCKsVV6JjhWBAAFeXS8fLChIgNMqbi2nYyRBgkcu1LrexqixoJtPxskDAjF1w3FrZoiaa3mZ3zWYJYLhcrrKqxtzdBspvihEJ9qiuIz0vCwTsfZ+e6337obFgHw1m7WUJ0Ha5DvgHQPMSvfo/oE+88xQXEvWyYkN7WVQA+ZAWSx9ODtJQKWEL0HC5sj+CcNEhdv07K2kuWNK43GVlZfV0ZOSF7igJSCmhDC3+thYa6JGiI4B8DIdOXuNN6w7cEBKkquKYC430PbKr0PmJr/yhiYIcWl6WJEA24A8f8TUd3UJPn3cA6AiQXC4RiWk+CRvki6hjrOt7sHjI8YQTTv/nTUgfQYkojZ4yAeRTSa43WXoy/e9JoiuAfKZKuN0bOyWez9MJZ8QIyzgQn9g/9w7+sb4/BnlnpDgl3Rda6yy5AMcJevyXhJyl/zntMCDAsUOZMc4784iDwDt7Z4h3k5VEG76XH0S/yiX2SSHnVOfjvFZPuQCSREeis7CQfvx7RONQTwC5oEp5gBT4/rnoG0u9fH81MwRMVQookD3DhiOAbPVAh0t0fePZSSIScI50VQqIMTKExDtnfoRDiAQtPX0ILFDNDKHUct8fqxgC4CIu17yIvzImwDVLXf9MlzEBuap+8os4WYxoTOQiMobIunp8dz31NFqisU5UCSCXLynryLxMDAlI/VrRzT+NXvHIQrHMXaELsiGzOXAyd7vd7kXbINpiTADpIJ+7Bec3ENcRcAh6bFvkdn+bFPjYOktMlbWEiSx6F/pOca6vQvhYaNMkSIDkMvgguRhsAeuPQY/RipFRCuEipm/mw5IF4odwTXW7WH8dKL43KCDjhlT/DWkFyxYwCnpcV52nvGviFV0+X69+L+q8y+kfgqI/AvXNkLuhwQLIrcPQ5fAtKcoUMP4mdBkW1NZU1ZhXRyJHdglw3zYoQNp+lH+aTAFp0KOHBfu3ahwA8vz9IVpDCYBltMLzZwkooM7RQOvrJ67jwP6TUQGLxRtPueIZmiWgP2Q4zsVXobuhkycZFEActXfu1Cpv3gwBlu/fqnEX+O8ZFRACDAE/A/9dPvWT85Bgy+WgNgsE1NEHn1o9kkhxHzKc5SGA3m7v86qf/AIpHjy0XsDDB8C+gZsA8ivk+M16ASuBewW/+qU9vrgjVgs4Svdvr3AUQH6H03TKagFLgfkPnvWTI+AbeZqsFdDkCcQrb+kxmANd155WxmGj+6QewcnAgaqNbmpkHORbP6mmc8Wfijg8QubpEYD1pnzV4C86v1XrEZjFMkilfOc/8LJHvu63Sbpe9B+p3AGA7yIIM3jXTx7R3dB6eTjwuo2BRUxhiNdt6oGz4hF3AWQTJOutCGcXN9cYfeGppln1whN952wK//pJAzWqO1hFGQWMfzeYJ9PHHUhnzVuX3uF3Bhj/saN+ehlqu1xhgnpZF236Qtm/kLDEkt1Qyctqb0/9ZBx13VrMk8m8rMxxNgmgd1MtlyssSF7WVbvq13W5woKml8UTOi5XOGB5Wfyg43KFA65eljbYLlcY4OtlaYPtcoUBzl6WNiy6+XSk2ycW3RSN4z/IfM8MC3cvSxt0MzGEy2UYkpd1PnKSSNHWv47b9r8Q3ea/kt72fxSgzf8sQ9v/YQziiJpw2+xPk6RNaL2fJkEgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAoFAIBAIRDj4H/KOv1nDI5GVAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTA5LTExVDE5OjMwOjQwKzAyOjAwjqSR7gAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0wOS0xMVQxOTozMDo0MCswMjowMP/5KVIAAABXelRYdFJhdyBwcm9maWxlIHR5cGUgaXB0YwAAeJzj8gwIcVYoKMpPy8xJ5VIAAyMLLmMLEyMTS5MUAxMgRIA0w2QDI7NUIMvY1MjEzMQcxAfLgEigSi4A6hcRdPJCNZUAAAAASUVORK5CYII=" rel="icon" type="image/png" sizes="192x192" />
+  <link href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii01MDAgLTUwMCAxMDAwIDEwMDAiPgogIDwhLS0gbG9nbyAtLT4KICA8ZyB0cmFuc2Zvcm09InNjYWxlKDAuOSkiPgogICAgPCEtLSBNIC0tPgogICAgPHBhdGgKICAgICAgY2xhc3M9ImxldHRlciIKICAgICAgZmlsbD0ibm9uZSIKICAgICAgc3Ryb2tlPSJibGFjayIKICAgICAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogICAgICBzdHJva2UtbGluZWpvaW49InJvdW5kIgogICAgICBzdHJva2Utd2lkdGg9IjUwIgogICAgICBkPSIKICAgICAgICBNIC0xMjUgMTI1IAogICAgICAgIEwgLTEyNSAtMTI1CiAgICAgICAgTCAwIDQ1CiAgICAgICAgTCAxMjUgLTEyNQogICAgICAgIEwgMTI1IDEyNQogICAgICAiCiAgICAvPgogICAgPCEtLSBsZWZ0IGJyYWNrZXQgLS0+CiAgICA8cGF0aAogICAgICBjbGFzcz0iYnJhY2tldCIKICAgICAgZmlsbD0ibm9uZSIKICAgICAgc3Ryb2tlPSJibGFjayIKICAgICAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogICAgICBzdHJva2UtbGluZWpvaW49InJvdW5kIgogICAgICBzdHJva2Utd2lkdGg9IjUwIgogICAgICBkPSIKICAgICAgICBNIC0yMDAgLTI1MAogICAgICAgIEwgLTMzMCAwIAogICAgICAgIEwgLTIwMCAyNTAKICAgICAgIgogICAgLz4KICAgIDwhLS0gcmlnaHQgYnJhY2tldCAtLT4KICAgIDxwYXRoCiAgICAgIGNsYXNzPSJicmFja2V0IgogICAgICBmaWxsPSJub25lIgogICAgICBzdHJva2U9ImJsYWNrIgogICAgICBzdHJva2UtbGluZWNhcD0icm91bmQiCiAgICAgIHN0cm9rZS1saW5lam9pbj0icm91bmQiCiAgICAgIHN0cm9rZS13aWR0aD0iNTAiCiAgICAgIGQ9IgogICAgICAgIG0gMjAwIDI1MCAKICAgICAgICBMIDMzMCAwCiAgICAgICAgTCAyMDAgLTI1MAogICAgICAiCiAgICAvPgogICAgPCEtLSBsZWZ0IGxpbmUgLS0+CiAgICA8cGF0aAogICAgICBjbGFzcz0ibGluZSIKICAgICAgZmlsbD0ibm9uZSIKICAgICAgc3Ryb2tlPSJibGFjayIKICAgICAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogICAgICBzdHJva2Utd2lkdGg9IjUwIgogICAgICBkPSIKICAgICAgICBNIC0zMzAgMAogICAgICAgIEwgLTM3MCAwCiAgICAgICIKICAgIC8+CiAgICA8IS0tIHJpZ2h0IGxpbmUgLS0+CiAgICA8cGF0aAogICAgICBjbGFzcz0ibGluZSIKICAgICAgZmlsbD0ibm9uZSIKICAgICAgc3Ryb2tlPSJibGFjayIKICAgICAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogICAgICBzdHJva2Utd2lkdGg9IjUwIgogICAgICBkPSIKICAgICAgICBNIDMzMCAwCiAgICAgICAgTCAzNzAgMAogICAgICAiCiAgICAvPgogICAgPCEtLSBsZWZ0IGNpcmNsZSAtLT4KICAgIDxjaXJjbGUKICAgICAgY2xhc3M9ImNpcmNsZSIKICAgICAgY3g9Ii00NTUiCiAgICAgIGN5PSIwIgogICAgICByPSIzMCIKICAgICAgZmlsbD0ibm9uZSIKICAgICAgc3Ryb2tlPSJibGFjayIKICAgICAgc3Ryb2tlLXdpZHRoPSIzMCIKICAgIC8+CiAgICA8IS0tIHJpZ2h0IGNpcmNsZSAtLT4KICAgIDxjaXJjbGUKICAgICAgY2xhc3M9ImNpcmNsZSIKICAgICAgY3g9IjQ1NSIKICAgICAgY3k9IjAiCiAgICAgIHI9IjMwIgogICAgICBmaWxsPSJub25lIgogICAgICBzdHJva2U9ImJsYWNrIgogICAgICBzdHJva2Utd2lkdGg9IjMwIgogICAgLz4KICA8L2c+Cjwvc3ZnPgo=" rel="mask-icon" color="#ad1457" />
+  <meta name="theme-color" content="#ad1457" />
+  <!-- end Manubot generated metadata -->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Single-cell phylogenomics from scRNA-seq SNPs using
+scPhylogenomics: an end-to-end workflow for clonal tumor evolution
+analysis</h1>
+</header>
+<!--
+This file is part of the scPhylogenomics protocol manuscript.
+Manubot will inject the title, authors, affiliations, and metadata defined in
+content/metadata.yaml directly above this file at build time. Anything written
+here renders *after* the title block.
+-->
+<h2 class="page_break_before" id="editorial-summary">Editorial
+summary</h2>
+<p>We present <strong>scPhylogenomics</strong>, a modular and
+containerized end‑to‑end workflow that infers clonal tumor evolution
+directly from 10x Genomics single‑cell RNA‑sequencing (scRNA‑seq) data.
+The protocol exploits somatic single‑nucleotide variants (SNVs) within
+transcriptomic reads to reconstruct high‑resolution clonal histories
+without requiring matched single‑cell DNA sequencing.</p>
+<h2 class="page_break_before" id="abstract">Abstract</h2>
+<p>We present scPhylogenomics, a modular and containerized computational
+workflow designed to infer clonal tumor evolution directly from 10x
+Genomics scRNA‑seq data. Unlike standard transcriptomic pipelines that
+focus solely on gene expression‑based cell states, this protocol
+exploits somatic single‑nucleotide variants (SNVs) within transcriptomic
+reads to reconstruct high‑resolution evolutionary histories. The
+procedure is organized into five automated modules: rigorous
+preprocessing (SoupX, DoubletFinder, and miQC), reference‑assisted cell
+typing (Seurat and SingleR), ploidy‑based malignancy stratification
+(CopyKAT), optimized single‑cell SNV calling (cellsnp‑lite), and
+maximum‑likelihood phylogeny reconstruction (FastTree or IQ‑TREE). A key
+advantage of scPhylogenomics over existing tools is its unified
+interface for clonal clustering, offering users a choice between
+deep‑learning–based manifold methods (SNPmanifold) or hybrid
+hierarchical weighted non‑negative matrix factorization (WNMF) to
+resolve complex subclonal architectures. Using multi‑site samples from
+the MSK SPECTRUM HGSOC study as a primary case study, users can expect
+to distinguish malignant from non‑malignant cells, identify
+site‑enriched clones, and generate annotated phylogenetic trees that
+reflect spatial patterns of metastasis. The end‑to‑end execution of the
+workflow typically takes 24–48 hours depending on dataset size and
+available high‑performance computing (HPC) resources, requiring basic
+experience with command‑line and containerized environments.</p>
+<h2 class="page_break_before" id="key-references">Key references</h2>
+<!--
+Replace these placeholders with the citations once `manubot cite` has been
+run. Use Manubot's `@doi:...`, `@pubmed:...`, or `@url:...` syntax.
+-->
+<ul>
+<li>Workflow and case study application — <em>Wafula et al., in
+preparation</em>.</li>
+<li>10x Genomics Cell Ranger pipeline —
+<code>@url:https://www.10xgenomics.com/support/software/cell-ranger</code>.</li>
+<li>SoupX, DoubletFinder, miQC — preprocessing references (TODO: add
+DOIs).</li>
+<li>Seurat and SingleR — cell‑typing references (TODO: add DOIs).</li>
+<li>CopyKAT — ploidy inference reference (TODO: add DOI).</li>
+<li>cellsnp‑lite — single‑cell genotyping reference (TODO: add
+DOI).</li>
+<li>FastTree, IQ‑TREE — maximum‑likelihood phylogenetics references
+(TODO: add DOIs).</li>
+<li>SNPmanifold — VAE‑based clonal clustering reference (TODO: add
+DOI).</li>
+</ul>
+<h2 class="page_break_before" id="introduction">Introduction</h2>
+<p>Single‑cell RNA sequencing (scRNA‑seq) has transformed cancer
+research by enabling the resolution of intratumoral transcriptional
+heterogeneity at single‑cell resolution. Conventional scRNA‑seq analysis
+workflows, however, focus predominantly on gene expression–based
+questions — clustering cells into phenotypic states, inferring
+trajectories, and identifying differentially expressed genes — while
+largely overlooking the somatic single‑nucleotide variants (SNVs)
+embedded in expressed transcripts. In contrast, the reconstruction of
+tumor clonal architecture and evolutionary histories is typically
+pursued using bulk or single‑cell DNA sequencing (scDNA‑seq) and
+dedicated tumor phylogenetics tools. As a result, most scRNA‑seq
+datasets remain underexploited with respect to clonal evolution, despite
+containing sequence‑level information that could, in principle, support
+phylogenetic inference.</p>
+<p>Inferring clonal structure from scRNA‑seq is challenging. Coverage is
+restricted to expressed loci and shows strong locus‑ and cell‑specific
+dropout, 3′/5′ capture biases in droplet‑based platforms distort the
+representation of coding regions, and amplification noise and allelic
+imbalance can mimic homoplasy or back‑mutation. These properties make
+scRNA‑seq intrinsically less suited to <em>de novo</em> variant
+discovery than scDNA‑seq, but they do not preclude phylogenomics if
+models and workflows explicitly account for transcriptomic noise and the
+targeting of expressed SNVs. Existing tumor phylogenetics methods such
+as SCITE, SCARLET and related frameworks were primarily developed for
+bulk or scDNA‑seq data and assume high‑quality, genome‑wide variant
+calls with well‑characterized error models. Moreover, there is currently
+no widely adopted end‑to‑end protocol that takes users from raw
+scRNA‑seq data through ambient RNA and doublet removal, cell‑type
+annotation, ploidy‑based tumor/normal stratification, scRNA‑seq–tailored
+SNV calling, generation of SNP‑based multiple sequence alignments (MSAs)
+and clonal clustering, to produce interpretable clonal phylogenies.</p>
+<p>Here we present <strong>scPhylogenomics</strong>, a fully modular,
+scalable, and reproducible computational workflow that performs
+single‑cell phylogenomics from 10x Genomics Chromium scRNA‑seq data by
+integrating RNA‑based quality control, reference‑guided cell‑type
+annotation, copy‑number–based ploidy inference and SNV‑based phylogeny
+reconstruction into a single protocol. The workflow is implemented as a
+GitHub repository with Docker and Singularity container images, and we
+illustrate its use on high‑grade serous ovarian cancer (HGSOC) samples
+from the MSK SPECTRUM study (SPECTRUM‑OV‑003).</p>
+<h3 id="development-of-the-protocol">Development of the protocol</h3>
+<p>The scPhylogenomics protocol builds on three conceptual strands of
+prior work: (i) robust preprocessing and quality control for
+droplet‑based scRNA‑seq, (ii) reference‑based cell‑type annotation and
+ploidy inference from expression data, and (iii) SNV‑based tumor
+phylogenetics and clonal clustering.</p>
+<p>First, the preprocessing strategy (see <em>Procedure</em>, Module 1)
+integrates established tools for ambient RNA correction (SoupX), doublet
+detection (DoubletFinder) and quality control based on mitochondrial
+content and gene detection (miQC). These tools have been widely used in
+the scRNA‑seq community but are usually deployed piecemeal, with users
+needing to embed them in bespoke pipelines. scPhylogenomics formalizes
+their combination into a standardized module that can be reused across
+projects.</p>
+<p>Second, the protocol leverages reference‑based methods to annotate
+cell types and infer ploidy. For cell‑type annotation, scPhylogenomics
+uses Seurat for integration and clustering and SingleR (with celldex
+references or user‑supplied atlases) to transfer labels from
+well‑characterized reference datasets to new scRNA‑seq data (see
+<em>Procedure</em>, Module 2). For ploidy inference, the protocol
+employs the <strong>copykat</strong> R package, which infers genome‑wide
+copy‑number profiles from expression data and classifies cells as
+aneuploid (putative malignant) or diploid (non‑malignant), thereby
+operationalizing the observation that many solid tumors exhibit
+pervasive aneuploidy while stromal and immune cells remain near‑diploid
+(see <em>Procedure</em>, Module 3).</p>
+<p>Third, scPhylogenomics extends ideas from tumor phylogenetics and
+single‑cell genotyping to scRNA‑seq. It adopts
+<strong>cellsnp‑lite</strong>, originally developed for efficient
+genotyping of known SNPs from scRNA‑seq and scDNA‑seq, to perform
+cell‑type–specific SNV calling from 10x Chromium BAM files and to
+generate genotype matrices (allele depth, total depth and other alleles)
+(see <em>Procedure</em>, Module 4, scripts
+<code>02-snv-calling.py</code> and
+<code>utils/run-cellsnp-lite.sh</code>). From these matrices, the
+protocol constructs SNP‑based MSAs in which each cell is encoded as a
+nucleotide sequence across ordered SNP loci, together with
+binary/tertiary mutation profiles (0/1/3 for
+reference/alternate/missing) for clustering (see
+<code>03-generate-snp-msa.py</code>). This representation allows the use
+of maximum‑likelihood phylogenetic software such as FastTree and IQ‑TREE
+and supports downstream clonal clustering using both a deep‑learning
+variational autoencoder (SNPmanifold) and a hierarchical weighted
+non‑negative matrix factorization (WNMF) approach (see
+<em>Procedure</em>, Module 5, <code>01-phylogeny-inference.py</code> and
+<code>03-snp-clustering.py</code>).</p>
+<p>The development of scPhylogenomics was motivated by the need to
+resolve clonal divergence in tumor scRNA‑seq data across both complex
+multi‑site cohorts, such as the MSK SPECTRUM HGSOC study, and more
+conventional single‑site or single‑sample datasets, where pervasive
+aneuploidy and intra‑tumoral heterogeneity pose similar analytical
+challenges. The protocol formalizes an analysis workflow we developed,
+organizing the method into five modules that can be run sequentially as
+an end‑to‑end pipeline or selectively applied to address related
+questions in tumor evolution and clonal architecture.</p>
+<h3 id="overview-of-the-procedure">Overview of the procedure</h3>
+<p>The scPhylogenomics workflow is organized into five continuous
+modules that transform Cell Ranger–processed 10x scRNA‑seq data into
+annotated clonal phylogenies (Fig. {<span class="citation" data-cites="fig:workflow-overview">@fig:workflow-overview</span>}).</p>
+<ol type="1">
+<li><p><strong>Data Preprocessing.</strong> This module
+(<em>Procedure</em>, Module 1) automates high‑throughput quality control
+of 10x Genomics Chromium scRNA‑seq data by sequentially removing ambient
+RNA, excluding doublets, and filtering low‑quality cells to generate
+cleaned feature‑barcode matrices for each sample. Starting from the raw
+Cell Ranger count outputs (barcodes, features, and count matrices), the
+wrapper script <code>run-data-preprocessing.sh</code> calls three R
+scripts in series: <code>01-remove-ambient-rna.R</code> (SoupX),
+<code>02-remove-doublets.R</code> (DoubletFinder), and
+<code>03-remove-compromised.R</code> (miQC).</p></li>
+<li><p><strong>Cell Typing.</strong> This module (<em>Procedure</em>,
+Module 2) consolidates miQC‑filtered samples into a merged or integrated
+Seurat object and performs reference‑assisted cell‑type annotation. The
+wrapper <code>run-cell-typing.sh</code> runs
+<code>01-consolidate-samples.R</code> (Seurat, Harmony/CCA/FastMNN/RPCA)
+and <code>02-annotate-cell-types.R</code> (SingleR with celldex, custom
+Seurat objects, or external mapping files) and produces UMAPs, heatmaps,
+and annotation tables.</p></li>
+<li><p><strong>Ploidy Inference.</strong> This module
+(<em>Procedure</em>, Module 3) applies
+<code>01-classify-cell-ploidy.R</code> to annotated Seurat objects using
+<strong>copykat</strong> to infer genome‑wide copy‑number profiles and
+stratify cells into aneuploid (malignant), diploid (normal), or
+uncertain classes.</p></li>
+<li><p><strong>SNV Calling.</strong> This module (<em>Procedure</em>,
+Module 4) performs cell type–specific somatic SNV calling and constructs
+SNP‑based pseudo‑MSAs using <code>01-get-cell-type-barcodes.R</code>,
+<code>02-snv-calling.py</code> (cellsnp‑lite driver), and
+<code>03-generate-snp-msa.py</code>.</p></li>
+<li><p><strong>Phylogeny Inference.</strong> This module
+(<em>Procedure</em>, Module 5) reconstructs single‑cell clonal histories
+by coupling maximum‑likelihood tree building
+(<code>01-phylogeny-inference.py</code> — FastTree/IQ‑TREE) with dual
+clonal clustering strategies (<code>03-snp-clustering.py</code> —
+SNPmanifold or hierarchical WNMF) and overlays clone, ploidy, cell type,
+and sample metadata via
+<code>04-infer-clonal-phylogeny.R</code>.</p></li>
+</ol>
+<p>A schematic flowchart (Fig. {<span class="citation" data-cites="fig:workflow-overview">@fig:workflow-overview</span>})
+summarizes the data flow and outputs of each module, and the
+<em>Procedure</em> section describes the execution of these scripts in
+detail.</p>
+<figure id="fig:workflow-overview">
+<img role="img" aria-label="Schematic of the scPhylogenomics end‑to‑end workflow showing the five modules — data preprocessing, cell typing, ploidy inference, SNV calling and phylogeny inference — together with the principal inputs and outputs of each module. Placeholder figure — replace with the final content/images/workflow-overview.png exported from the lab figure master." src="images/workflow-overview.png" style="width:6in" alt="Schematic of the scPhylogenomics end‑to‑end workflow showing the five modules — data preprocessing, cell typing, ploidy inference, SNV calling and phylogeny inference — together with the principal inputs and outputs of each module. Placeholder figure — replace with the final content/images/workflow-overview.png exported from the lab figure master." />
+<figcaption aria-hidden="true">Schematic of the scPhylogenomics
+end‑to‑end workflow showing the five modules — data preprocessing, cell
+typing, ploidy inference, SNV calling and phylogeny inference — together
+with the principal inputs and outputs of each module.
+<strong>Placeholder figure — replace with the final
+<code>content/images/workflow-overview.png</code> exported from the lab
+figure master.</strong></figcaption>
+</figure>
+<h3 id="applications">Applications</h3>
+<p>scPhylogenomics is intended for researchers who wish to leverage
+scRNA‑seq data to study clonal tumor evolution, particularly in settings
+where matched scDNA‑seq is unavailable or impractical. Proven and
+potential applications include:</p>
+<ul>
+<li><strong>Reconstruction of tumor clonal phylogenies from
+scRNA‑seq.</strong> By generating SNP‑based MSAs and mutation profiles
+from scRNA‑seq, scPhylogenomics enables maximum‑likelihood tree
+inference and clonal clustering at single‑cell resolution.</li>
+<li><strong>Dissection of intratumoral heterogeneity and metastatic
+spread.</strong> In the MSK SPECTRUM HGSOC case study, the protocol
+distinguishes malignant from non‑malignant cells, reveals aneuploid
+clones enriched at specific intraperitoneal sites and reconstructs
+phylogenies consistent with spatial patterns of metastasis.</li>
+<li><strong>Integration of genotype and transcriptional
+phenotype.</strong> Because clonal assignments and ploidy labels can be
+mapped back onto expression‑derived embeddings (e.g., UMAPs),
+scPhylogenomics supports joint analysis of evolutionary lineage, cell
+state and microenvironmental context.</li>
+<li><strong>Comparative studies across tumor types.</strong> The
+workflow is demonstrated on HGSOC, TNBC and AML datasets to illustrate
+its generalizability across epithelial and hematologic
+malignancies.</li>
+<li><strong>Method benchmarking and development.</strong> The modular
+design (e.g., pluggable SNV filters, clustering methods) makes
+scPhylogenomics suitable as a testbed for new scRNA‑seq genotyping
+models, phylogenetic algorithms or integrative multi‑omic
+approaches.</li>
+</ul>
+<h3 id="comparison-to-other-methods">Comparison to other methods</h3>
+<p>Several existing methods address individual components of the
+scPhylogenomics workflow, but to our knowledge no published protocol
+provides an integrated, containerized pipeline for scRNA‑seq–based tumor
+phylogenomics. On the preprocessing and quality‑control side, frameworks
+such as Seurat, Scanpy and scater implement normalization, dimension
+reduction and clustering but leave ambient RNA, doublet detection and
+mitochondrial QC to separate tools. SoupX, DoubletFinder and miQC are
+widely used to address these issues, yet users typically need to
+orchestrate them manually. scPhylogenomics standardizes this combination
+and ensures that barcodes propagated into SNV calling are already
+filtered for major technical artifacts.</p>
+<p>For SNV calling from scRNA‑seq, general‑purpose tools (for example,
+GATK RNA‑seq best practices) are not optimized for ultra‑sparse
+single‑cell data and may produce high false‑positive rates.
+<strong>cellsnp‑lite</strong> was designed specifically for efficient
+genotyping of biallelic SNPs from scRNA‑seq or scDNA‑seq, providing fast
+pileup and genotyping of either detected or user‑supplied common SNPs
+and outputting sparse SNP‑by‑cell count and genotype matrices.
+Alternative tools such as scSplit, demuxlet and vireo focus on donor
+demultiplexing and genotype assignment rather than phylogenetically
+informative SNV discovery. Building on cellsnp‑lite, scPhylogenomics
+adds optional filtering against common SNP panels, RNA‑editing catalogs
+and Panels of Normals, and generates SNP‑based MSAs plus binary/tertiary
+mutation matrices required for downstream phylogenetic and clustering
+analyses.</p>
+<p>In tumor phylogenetics, methods such as SCITE, SCARLET, SCClone and
+SECEDO were developed primarily for scDNA‑seq or bulk data and model
+clonal evolution using binary genotype matrices under infinite‑sites or
+finite‑sites assumptions. They offer sophisticated probabilistic
+treatment of sequencing errors and copy‑number events, but generally
+assume precomputed SNV calls and do not integrate scRNA‑seq–specific
+preprocessing or the construction of nucleotide MSAs. Moreover, they
+often treat SNVs as abstract binary characters rather than sequences,
+limiting direct use of general phylogenetic software such as FastTree,
+IQ‑TREE or RAxML. scPhylogenomics explicitly generates SNP‑based MSAs,
+enabling users to apply standard molecular phylogenetic models to
+scRNA‑seq–derived SNVs while also providing clonal clustering on
+mutation profiles.</p>
+<p>Several end‑to‑end scRNA‑seq pipelines (e.g., nf‑core/scrnaseq,
+scdrake and other standardized workflows) emphasize expression‑based
+analyses — QC, normalization, clustering and differential expression —
+but do not implement SNV calling or phylogeny reconstruction from
+scRNA‑seq. Conversely, existing tumor phylogenomics workflows have
+focused on DNA‑based input and typically lack modules for
+scRNA‑seq–specific QC, cell‑type annotation and ploidy detection.</p>
+<p>The main advantages of scPhylogenomics relative to these alternatives
+are (i) its explicit focus on SNV‑based phylogenomics from scRNA‑seq,
+(ii) the integration of ploidy‑based tumor/normal stratification to
+restrict SNV calling to malignant cells, (iii) the generation of both
+SNP MSAs and mutation profile matrices, and (iv) containerized
+implementation (Docker/Singularity) that facilitates reproducible
+deployment on workstations and HPC clusters. Its main limitations,
+discussed in detail elsewhere in the manuscript, include reliance on
+expressed loci, dependence on aneuploidy‑based tumor classification, and
+computational cost for very large datasets.</p>
+<h2 class="page_break_before" id="experimental-design">Experimental
+design</h2>
+<h3 id="considerations-before-starting">Considerations before
+starting</h3>
+<p>Several aspects of experimental design should be considered before
+implementing scPhylogenomics:</p>
+<ul>
+<li><strong>Data type and sequencing platform.</strong> The protocol is
+optimized for 10x Chromium 3′/5′ scRNA‑seq data processed by Cell
+Ranger, where gene expression matrices and BAM files with cell barcodes
+and UMIs are readily available. Application to other platforms (e.g.,
+Drop‑seq, inDrop, Smart‑seq) is feasible in principle but may require
+adaptation of input formats and adjustment of SNV filtering
+thresholds.</li>
+<li><strong>Tumor type and aneuploidy burden.</strong> Because ploidy
+inference with copykat is only one (optional) route for tumor/normal
+stratification in scPhylogenomics, the workflow is especially effective
+when malignant cells exhibit clear genome‑wide aneuploidy, such as in
+many HGSOC, TNBC, and other chromosomally unstable solid tumors. SNV
+calling is not restricted to copykat‑defined tumor cells; it can be
+performed based on user‑specified cell types deemed malignant from
+external information (e.g., marker expression or prior annotations),
+which is particularly useful in near‑diploid cancers (e.g., many
+pediatric or hematologic malignancies) where copy‑number–based
+classification has limited power.</li>
+<li><strong>Sample design and replication.</strong> scPhylogenomics can
+be applied to single or multiple tumor samples per patient and across
+multiple patients. For evolutionary questions (e.g., metastatic
+seeding), multi‑regional or longitudinal sampling greatly increases
+interpretability. Biological replication at the patient level remains
+essential for generalizing conclusions. Within each sample, sufficient
+cell numbers per tumor compartment (typically several thousand) are
+needed to capture clonal diversity.</li>
+<li><strong>Controls and orthogonal data.</strong> Where possible, users
+should complement scRNA‑seq with bulk exome or targeted DNA sequencing
+to confirm key driver mutations and to assess coverage biases in
+scRNA‑derived SNVs. Normal tissues or peripheral blood mononuclear cells
+can serve as a reference for Panel‑of‑Normals construction and for
+benchmarking copykat classifications.</li>
+<li><strong>Pre‑optimization of QC and SNV thresholds.</strong> Ambient
+RNA, doublet, and mitochondrial filters should be tuned on pilot
+datasets or subsets of the data, using diagnostic plots to avoid
+over‑filtering (see <em>Procedure</em>, Modules 1–2). Similarly, SNV
+filtering parameters (<code>min_cells_per_snp</code>,
+<code>min_snps_per_cell</code>, allele frequency thresholds) may require
+adjustment based on sequencing depth and chemistry (see
+<em>Procedure</em>, Module 4).</li>
+</ul>
+<h3 id="equipment-expertise-and-computational-resources">Equipment,
+expertise, and computational resources</h3>
+<p>The protocol requires:</p>
+<ul>
+<li>Access to a Linux workstation or HPC cluster with sufficient CPU
+cores (≥16 recommended), memory (≥64 GB, ideally 128 GB for large
+projects), and storage (≥100 GB per project).</li>
+<li>Basic familiarity with the Linux command line, container‑based
+execution (Docker or Singularity), and R and Python scripting
+environments (to run the module scripts described in the
+<em>Procedure</em>).</li>
+<li>Experience with scRNA‑seq analysis (e.g., using Seurat) to interpret
+QC plots, cell‑type annotations, and integration results.</li>
+<li>Familiarity with phylogenetic concepts (tree topology, branch
+lengths, model selection, bootstrap support) to interpret clonal trees
+and evaluate clustering solutions.</li>
+</ul>
+<h3 id="regulatory-approvals">Regulatory approvals</h3>
+<p>scPhylogenomics is a computational workflow that operates on existing
+sequencing data and does not involve direct manipulation of human
+subjects or biological specimens. Regulatory approvals (e.g.,
+institutional review board approval, informed consent, data access
+agreements) are assumed to have been obtained for the generation and use
+of the underlying scRNA‑seq datasets and are not addressed by this
+protocol. Users should ensure that appropriate permissions (e.g., data
+use agreements for controlled‑access datasets, Material Transfer
+Agreements for cell lines) have been secured before downloading or
+analyzing patient‑derived data.</p>
+<h2 class="page_break_before" id="materials">Materials</h2>
+<blockquote>
+<p><strong>Drafting status:</strong> placeholder. To be expanded in
+subsequent sessions using the per‑module README files in the
+<code>scPhylogenomics</code> GitHub repository
+(<code>analyses/&lt;module&gt;/README.md</code>).</p>
+</blockquote>
+<p>Nature Protocols expects the <em>Materials</em> section to enumerate
+every biological reagent, software dependency, hardware requirement and
+reference dataset that is required to execute the protocol. For this
+purely computational workflow, <em>Materials</em> will be presented as
+four subsections: <strong>REAGENTS</strong> (data),
+<strong>EQUIPMENT</strong> (hardware/software), <strong>REFERENCE
+DATASETS</strong>, and <strong>REAGENT/EQUIPMENT SETUP</strong>.
+Pricing/vendor lines are omitted because no wet‑lab consumables are
+used; instead, version pins and DOIs are listed.</p>
+<h3 id="reagents-data">REAGENTS (data)</h3>
+<blockquote>
+<p><strong>TODO</strong> — populate from
+<code>scPhylogenomics/README.md</code> (top‑level “Data description”
+section) and from each module README.</p>
+</blockquote>
+<ul>
+<li><strong>Triple‑negative breast cancer (TNBC) dataset</strong> —
+TNBC5 sample from GSE148673 (CopyKAT methodology development
+study).</li>
+<li><strong>MSK SPECTRUM HGSOC dataset</strong> — six tumor samples from
+multiple sites of patient SPECTRUM‑OV‑003
+(<code>@url:https://www.synapse.org/Synapse:syn25569736/wiki/612269</code>).</li>
+<li><strong>Acute myeloid leukemia (AML) dataset</strong> — sample LE1.
+<em>(Brief dataset description to be added — see open question SQ‑01 in
+<code>sessions/</code>.)</em></li>
+<li><strong>10x Genomics Chromium reference transcriptome</strong> —
+downloaded from
+<code>@url:https://www.10xgenomics.com/support/software/cell-ranger/downloads#reference-downloads</code>.</li>
+<li><strong>dbSNP/1000 Genomes common variants</strong> (used by
+cellsnp‑lite Mode 1).</li>
+<li><strong>REDIportal RNA‑editing catalog</strong> (used as optional
+SNV filter).</li>
+<li><strong>Panel of Normals (PoN)</strong> — constructed from matched
+or atlas normal samples (procedure to be documented in the
+Materials/Procedure cross‑ref).</li>
+</ul>
+<h3 id="equipment-hardware-and-software">EQUIPMENT (hardware and
+software)</h3>
+<blockquote>
+<p><strong>TODO</strong> — pin exact versions used in the case study.
+Versions should match those in <code>Dockerfile</code> at the root of
+the scPhylogenomics repository.</p>
+</blockquote>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Category</th>
+<th>Tool</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hardware</td>
+<td>Linux workstation or HPC</td>
+<td>—</td>
+<td>≥16 CPU cores; 64–128 GB RAM; ≥100 GB storage</td>
+</tr>
+<tr>
+<td>Container runtime</td>
+<td>Docker</td>
+<td>≥24.0</td>
+<td>Build &amp; run scPhylogenomics image</td>
+</tr>
+<tr>
+<td>Container runtime</td>
+<td>Singularity / Apptainer</td>
+<td>≥1.2</td>
+<td>HPC execution</td>
+</tr>
+<tr>
+<td>Aligner</td>
+<td>Cell Ranger</td>
+<td>TBD</td>
+<td>scRNA‑seq alignment, demultiplexing</td>
+</tr>
+<tr>
+<td>R framework</td>
+<td>Seurat</td>
+<td>TBD</td>
+<td>scRNA‑seq object handling, integration</td>
+</tr>
+<tr>
+<td>R</td>
+<td>SoupX</td>
+<td>TBD</td>
+<td>Ambient RNA correction</td>
+</tr>
+<tr>
+<td>R</td>
+<td>DoubletFinder</td>
+<td>TBD</td>
+<td>Doublet detection</td>
+</tr>
+<tr>
+<td>R</td>
+<td>miQC</td>
+<td>TBD</td>
+<td>Mitochondrial/QC filtering</td>
+</tr>
+<tr>
+<td>R</td>
+<td>SingleR + celldex</td>
+<td>TBD</td>
+<td>Reference‑assisted cell typing</td>
+</tr>
+<tr>
+<td>R</td>
+<td>copykat</td>
+<td>TBD</td>
+<td>Ploidy inference</td>
+</tr>
+<tr>
+<td>C/Python</td>
+<td>cellsnp‑lite</td>
+<td>TBD</td>
+<td>Single‑cell SNV calling</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>SNPmanifold</td>
+<td>TBD</td>
+<td>VAE‑based clonal clustering</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>NumPy / SciPy / scikit‑learn / nimfa</td>
+<td>TBD</td>
+<td>WNMF clonal clustering</td>
+</tr>
+<tr>
+<td>Phylogenetics</td>
+<td>FastTree</td>
+<td>TBD</td>
+<td>Maximum‑likelihood trees (fast)</td>
+</tr>
+<tr>
+<td>Phylogenetics</td>
+<td>IQ‑TREE</td>
+<td>TBD</td>
+<td>Maximum‑likelihood trees (model selection, bootstraps)</td>
+</tr>
+<tr>
+<td>Visualization</td>
+<td>ggplot2 / ggtree / ape</td>
+<td>TBD</td>
+<td>Tree and clone annotation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="reagentequipment-setup">REAGENT/EQUIPMENT SETUP</h3>
+<blockquote>
+<p><strong>TODO</strong> — convert each module README’s “Setup” /
+“Installation” instructions into Nature Protocols numbered Setup
+paragraphs.</p>
+</blockquote>
+<ol type="1">
+<li><p><strong>Clone the workflow repository.</strong></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/ewafula/scPhylogenomics.git</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> scPhylogenomics</span></code></pre></div></li>
+<li><p><strong>Pull the prebuilt container</strong> (recommended)
+<strong>or build from source</strong>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Singularity (HPC)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">singularity</span> pull docker://ghcr.io/ewafula/scphylogenomics:latest</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Docker (workstation)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull ghcr.io/ewafula/scphylogenomics:latest</span></code></pre></div></li>
+<li><p><strong>Configure the project data tree</strong> under
+<code>data/projects/&lt;PROJECT&gt;/...</code> following the directory
+layout shown in the top‑level README.</p></li>
+<li><p><strong>Download reference resources</strong> (Cell Ranger
+reference, common SNP VCF, REDIportal, PoN) into
+<code>data/refdata/</code>.</p></li>
+<li><p><strong>(Optional) Build a custom reference</strong> for SingleR
+using <code>scripts/create-reference-dataset.R</code>.</p></li>
+</ol>
+<h2 class="page_break_before" id="procedure">Procedure</h2>
+<blockquote>
+<p><strong>Drafting status:</strong> scaffold. Each module sub‑section
+is a placeholder wrapper. The numbered Nature Protocols steps will be
+ported in upcoming sessions from
+<code>scPhylogenomics/analyses/&lt;module&gt;/README.md</code> and the
+wrapper <code>run-*.sh</code> scripts. Numbering is contiguous across
+modules per Nature Protocols house style.</p>
+</blockquote>
+<h3 id="module-1-data-preprocessing-timing-26-h">Module 1 — Data
+preprocessing ● Timing 2–6 h</h3>
+<blockquote>
+<p>Source material: <code>analyses/data-preprocessing/README.md</code>
+and <code>run-data-preprocessing.sh</code>.</p>
+</blockquote>
+<ol type="1">
+<li><p><strong>Prepare Cell Ranger outputs.</strong> <em>(TODO:
+paraphrase from Module 1 README, including expected directory layout
+under
+<code>data/projects/&lt;PROJECT&gt;/&lt;SAMPLE&gt;/outs/</code>.)</em></p></li>
+<li><p><strong>Remove ambient RNA with SoupX.</strong> Run
+<code>01-remove-ambient-rna.R</code>. <em>(TODO: list parameters, key
+flags, and expected diagnostic plots.)</em></p>
+<p>▲ <strong>CRITICAL STEP</strong> — Check the SoupX contamination
+fraction (<code>rho</code>) diagnostic plot before continuing.</p></li>
+<li><p><strong>Detect and remove doublets with DoubletFinder.</strong>
+Run <code>02-remove-doublets.R</code>.</p></li>
+<li><p><strong>Filter compromised cells with miQC.</strong> Run
+<code>03-remove-compromised.R</code>.</p>
+<p>▲ <strong>CRITICAL STEP</strong> — Inspect the per‑sample miQC
+posterior probability plots to ensure that healthy cell populations are
+retained.</p></li>
+<li><p><strong>Output check.</strong> Confirm the filtered
+feature‑barcode matrices and sample‑level QC tables in
+<code>analyses/data-preprocessing/results/</code>.</p></li>
+</ol>
+<h3 id="module-2-cell-typing-timing-14-h">Module 2 — Cell typing ●
+Timing 1–4 h</h3>
+<blockquote>
+<p>Source material: <code>analyses/cell-typing/README.md</code> and
+<code>run-cell-typing.sh</code>.</p>
+</blockquote>
+<ol start="6" type="1">
+<li><p><strong>Consolidate samples with
+<code>01-consolidate-samples.R</code></strong> (Seurat: normalization,
+optional integration via Harmony / CCA / FastMNN / RPCA,
+clustering).</p></li>
+<li><p><strong>Annotate cell types with
+<code>02-annotate-cell-types.R</code></strong> (SingleR with celldex
+references, custom Seurat references, or external mapping
+files).</p></li>
+<li><p><strong>Output check.</strong> UMAPs, heatmaps, and annotation
+tables under <code>analyses/cell-typing/plots/</code> and
+<code>.../results/</code>.</p></li>
+</ol>
+<h3 id="module-3-ploidy-inference-timing-18-h-cpubound">Module 3 —
+Ploidy inference ● Timing 1–8 h (CPU‑bound)</h3>
+<blockquote>
+<p>Source material: <code>analyses/ploidy-inference/README.md</code> and
+<code>run-ploidy-inference.sh</code>.</p>
+</blockquote>
+<ol start="9" type="1">
+<li><p><strong>Classify cell ploidy with
+<code>01-classify-cell-ploidy.R</code> (copykat).</strong></p></li>
+<li><p><strong>Inspect copykat heatmaps</strong> and merge ploidy
+classes into the Seurat metadata.</p>
+<p>◆ <strong>OPTION</strong> — Skip this module and use external
+malignancy labels (e.g., from marker‑based annotation) when working with
+near‑diploid cancers.</p></li>
+</ol>
+<h3 id="module-4-snv-calling-timing-424-h">Module 4 — SNV calling ●
+Timing 4–24 h</h3>
+<blockquote>
+<p>Source material: <code>analyses/snv-calling/README.md</code>,
+<code>run-snv-calling.sh</code>, and
+<code>utils/run-cellsnp-lite.sh</code>.</p>
+</blockquote>
+<ol start="11" type="1">
+<li><p><strong>Extract barcodes for the target population</strong> with
+<code>01-get-cell-type-barcodes.R</code>.</p></li>
+<li><p><strong>Run cellsnp‑lite</strong> via
+<code>02-snv-calling.py</code>. <em>(TODO: enumerate Mode 1 vs Mode 2
+parameters, optional REDIportal/PoN filtering.)</em></p>
+<p>▲ <strong>CRITICAL STEP</strong> — Verify the count of variants
+surviving filtering (<code>min_count</code>, <code>min_maf</code>); too
+few SNVs will starve downstream phylogenetics.</p></li>
+<li><p><strong>Generate SNP MSAs and mutation profile matrices</strong>
+with <code>03-generate-snp-msa.py</code> (parameters:
+<code>min_cells_per_snp</code>, <code>min_snps_per_cell</code>, allele
+frequency thresholds).</p></li>
+</ol>
+<h3 id="module-5-phylogeny-inference-timing-418-h">Module 5 — Phylogeny
+inference ● Timing 4–18 h</h3>
+<blockquote>
+<p>Source material: <code>analyses/phylogeny-inference/README.md</code>
+and <code>run-phylogeny-inference.sh</code>.</p>
+</blockquote>
+<ol start="14" type="1">
+<li><p><strong>Infer maximum‑likelihood phylogenies</strong> with
+<code>01-phylogeny-inference.py</code> (FastTree or IQ‑TREE).</p></li>
+<li><p><strong>Harmonize variant sets across tree and clustering
+inputs</strong> with <code>02-filter-variants.py</code>.</p></li>
+<li><p><strong>Cluster clones</strong> with
+<code>03-snp-clustering.py</code> (SNPmanifold VAE <em>or</em>
+hierarchical Ward + WNMF).</p></li>
+<li><p><strong>Annotate trees</strong> with
+<code>04-infer-clonal-phylogeny.R</code> to overlay clone, ploidy, cell
+type, and sample of origin and to produce annotated
+clonal/lineage/sample‑level trees.</p>
+<p>❚ <strong>PAUSE POINT</strong> — Save annotated tree objects
+(<code>.rds</code>/<code>.nwk</code>) before downstream DEG/GSEA
+analyses.</p></li>
+</ol>
+<h2 class="page_break_before" id="timing">Timing</h2>
+<blockquote>
+<p><strong>Drafting status:</strong> placeholder. Per‑step timings will
+be filled in after benchmarking on the SPECTRUM‑OV‑003 case study.</p>
+</blockquote>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Steps</th>
+<th>Description</th>
+<th>Approx. time (case study)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1–5</td>
+<td>Module 1 — Data preprocessing</td>
+<td>2–6 h</td>
+</tr>
+<tr>
+<td>6–8</td>
+<td>Module 2 — Cell typing</td>
+<td>1–4 h</td>
+</tr>
+<tr>
+<td>9–10</td>
+<td>Module 3 — Ploidy inference (copykat)</td>
+<td>1–8 h</td>
+</tr>
+<tr>
+<td>11–13</td>
+<td>Module 4 — SNV calling (cellsnp‑lite + MSA)</td>
+<td>4–24 h</td>
+</tr>
+<tr>
+<td>14–17</td>
+<td>Module 5 — Phylogeny inference and clonal clustering</td>
+<td>4–18 h</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td>End‑to‑end execution</td>
+<td><strong>24–48 h</strong> (typical)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>TODO</strong> — replace approximate ranges with measured
+wall‑clock times on a defined HPC profile (CPU/RAM/threads). Add
+hands‑on vs. compute‑only breakdowns where useful.</p>
+</blockquote>
+<h2 class="page_break_before" id="troubleshooting">Troubleshooting</h2>
+<blockquote>
+<p><strong>Drafting status:</strong> placeholder. Each module README in
+the scPhylogenomics repository contains a “Troubleshooting / Common
+issues” block — these will be consolidated here in Nature Protocols
+house style (Step | Problem | Possible reason | Solution).</p>
+</blockquote>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>Problem</th>
+<th>Possible reason</th>
+<th>Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>SoupX <code>rho</code> cannot be estimated</td>
+<td>Too few empty droplets in raw matrix</td>
+<td>Provide <code>tod</code>/<code>toc</code> from raw Cell Ranger
+output and re‑run with manually supplied clusters.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>DoubletFinder identifies an implausibly large doublet fraction</td>
+<td>Heterogeneous tissue with rare populations</td>
+<td>Re‑estimate <code>pK</code> via <code>paramSweep_v3</code> and tune
+the expected doublet rate to the chemistry.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>miQC drops most cells</td>
+<td>Tissue with intrinsically high mitochondrial signal</td>
+<td>Replace miQC with a fixed % MT cutoff or run on a tissue‑matched
+calibration dataset.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>SingleR labels are sparse / “NA”</td>
+<td>Reference mismatch</td>
+<td>Use a lineage‑matched celldex reference or a custom Seurat reference
+built with <code>scripts/create-reference-dataset.R</code>.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>copykat fails to converge</td>
+<td>Too few cells; unclear normal baseline</td>
+<td>Provide a normal‑cell barcode list explicitly via
+<code>norm.cell.names</code>.</td>
+</tr>
+<tr>
+<td>12</td>
+<td>cellsnp‑lite output is empty</td>
+<td>BAM lacks <code>CB</code>/<code>UB</code> tags or barcodes don’t
+match Cell Ranger output</td>
+<td>Re‑split BAM with the same barcode list used in Module 1; verify
+chemistry.</td>
+</tr>
+<tr>
+<td>13</td>
+<td>SNP MSA collapses to a few cells</td>
+<td><code>min_cells_per_snp</code> / <code>min_snps_per_cell</code> too
+strict</td>
+<td>Lower thresholds; inspect SNP/cell distribution histograms.</td>
+</tr>
+<tr>
+<td>14</td>
+<td>IQ‑TREE OOM / very slow</td>
+<td>Too many sites or cells</td>
+<td>Use FastTree first; subset variants by
+<code>02-filter-variants.py</code>; partition by chromosome.</td>
+</tr>
+<tr>
+<td>16</td>
+<td>SNPmanifold latent space collapses</td>
+<td>Insufficient informative SNPs per cell</td>
+<td>Reduce VAE latent dim; switch to hierarchical WNMF clustering.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>TODO</strong> — extend with case‑study‑specific failure modes
+encountered during the SPECTRUM‑OV‑003 / TNBC5 / LE1 runs.</p>
+</blockquote>
+<h2 class="page_break_before" id="anticipated-results">Anticipated
+results</h2>
+<blockquote>
+<p><strong>Drafting status:</strong> placeholder. To be expanded once
+the case‑study figures are finalized. Each subsection below corresponds
+to a planned figure or supplementary item.</p>
+</blockquote>
+<h3 id="module-1-cleaned-featurebarcode-matrices">Module 1 — Cleaned
+feature‑barcode matrices</h3>
+<p>Users should obtain per‑sample filtered Seurat objects with
+diagnostic plots showing (i) the SoupX contamination fraction
+<code>rho</code>, (ii) DoubletFinder doublet‑score distributions, and
+(iii) miQC posterior probability surfaces. Typical retention is 60–90%
+of input barcodes.</p>
+<blockquote>
+<p><strong>TODO</strong> — insert representative QC panel for
+SPECTRUM‑OV‑003.</p>
+</blockquote>
+<h3 id="module-2-referenceannotated-cell-atlas">Module 2 —
+Reference‑annotated cell atlas</h3>
+<p>Expected output: an integrated UMAP partitioned into epithelial,
+stromal, and immune compartments with SingleR labels. For
+SPECTRUM‑OV‑003 the case study yields a clear epithelial/aneuploid axis
+distinguishable from the tumor microenvironment.</p>
+<h3 id="module-3-ploidy-classification">Module 3 — Ploidy
+classification</h3>
+<p>Expected output: copykat heatmaps showing chromosome‑level CNV
+signal, plus a metadata column partitioning cells into
+<code>aneuploid</code> / <code>diploid</code> /
+<code>not.defined</code>. Aneuploid fraction varies by tumor type; HGSOC
+samples typically exceed 70% aneuploid epithelial cells.</p>
+<h3 id="module-4-snp-msas-and-mutation-matrices">Module 4 — SNP MSAs and
+mutation matrices</h3>
+<p>Expected output: a FASTA‑style SNP pseudo‑MSA (cells × ordered SNP
+loci) and a binary/tertiary mutation matrix (<code>0/1/3</code> for
+ref/alt/missing). Typical sizes for the case studies range from a few
+thousand to tens of thousands of SNPs across thousands of cells after
+default filtering.</p>
+<h3 id="module-5-annotated-clonal-phylogenies">Module 5 — Annotated
+clonal phylogenies</h3>
+<p>Expected output: maximum‑likelihood trees (Newick + plot), clone
+assignments, and overlay panels showing clone × sample, clone × cell
+type and clone × ploidy. For SPECTRUM‑OV‑003 the trees are expected to
+reveal site‑enriched aneuploid clones consistent with intraperitoneal
+metastasis patterns.</p>
+<blockquote>
+<p><strong>TODO</strong> — embed final figures:
+<code>images/fig2-cell-typing.png</code>,
+<code>images/fig3-ploidy.png</code>,
+<code>images/fig4-snv-msa.png</code>,
+<code>images/fig5-phylogeny.png</code>.</p>
+</blockquote>
+<h2 class="page_break_before" id="discussion">Discussion</h2>
+<blockquote>
+<p><strong>Drafting status:</strong> placeholder. Nature Protocols
+allows an optional short discussion. Anticipated themes:</p>
+</blockquote>
+<ul>
+<li><strong>Strengths.</strong> First end‑to‑end, containerized
+scRNA‑seq → SNV → phylogeny pipeline; explicit SNP MSAs that integrate
+with standard phylogenetics software; pluggable clonal clustering.</li>
+<li><strong>Limitations.</strong> Reliance on expressed loci;
+aneuploidy‑dependence of copykat; computational cost on cohorts with
+millions of cells.</li>
+<li><strong>Outlook.</strong> Extension to additional chemistries
+(Smart‑seq, multiome), long‑read scRNA‑seq, joint inference with
+copy‑number trees, and benchmarking against scDNA‑seq–based clonal
+trees.</li>
+</ul>
+<h2 class="page_break_before" id="reporting-summary">Reporting
+summary</h2>
+<p>A Nature Research Reporting Summary will be supplied with the final
+manuscript submission. <em>(TODO.)</em></p>
+<h2 class="page_break_before" id="data-availability">Data
+availability</h2>
+<ul>
+<li><strong>TNBC5</strong> scRNA‑seq data are available under GEO
+accession
+<code>@url:https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE148673</code>.</li>
+<li><strong>MSK SPECTRUM</strong> data are available via Synapse
+<code>@url:https://www.synapse.org/Synapse:syn25569736/wiki/612269</code>
+(controlled access).</li>
+<li><strong>AML LE1</strong> data: <em>TODO — add accession or
+contact.</em></li>
+</ul>
+<h2 class="page_break_before" id="code-availability">Code
+availability</h2>
+<p>The scPhylogenomics workflow is openly developed at
+<code>@url:https://github.com/ewafula/scPhylogenomics</code>. Container
+images (Docker/Singularity) are released under the same repository. The
+version used in this protocol is pinned in
+<code>build/environment.yml</code> and in the
+<code>Dockerfile</code>.</p>
+<h2 class="page_break_before" id="author-contributions">Author
+contributions</h2>
+<blockquote>
+<p><strong>TODO</strong> — populate using the CRediT taxonomy.</p>
+</blockquote>
+<p>E.W. — software, methodology, writing — original draft. P.D. —
+methodology, validation. S.M. — conceptualization, supervision, funding
+acquisition, writing — review &amp; editing.</p>
+<h2 class="page_break_before" id="acknowledgements">Acknowledgements</h2>
+<blockquote>
+<p><strong>TODO</strong> — funding sources, MSK SPECTRUM consortium
+acknowledgement, Mississippi MAGIC HPC.</p>
+</blockquote>
+<h2 class="page_break_before" id="competing-interests">Competing
+interests</h2>
+<p>The authors declare no competing interests.</p>
+<h2 class="page_break_before" id="references">References</h2>
+<!--
+Manubot will replace this section automatically. Do not edit by hand.
+
+How citations work in this manuscript:
+- Cite a DOI:    [@doi:10.1038/s41587-023-01767-y]
+- Cite a PMID:   [@pubmed:30559446]
+- Cite a URL:    [@url:https://example.com]
+- Cite an arXiv: [@arxiv:2106.04561]
+- Cite a tag:    [@tag:soupx]   (resolved via content/citation-tags.tsv)
+
+Manubot regenerates citation metadata in `content/manual-references.json`
+during the build (see `build/build.sh`).
+-->
+<div id="refs" role="list">
+
+</div>
+</body>
+</html>
