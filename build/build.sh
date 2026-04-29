@@ -60,9 +60,10 @@ fi
 
 # Optional formats.
 if [[ "${BUILD_DOCX:-false}" == "true" ]]; then
+  # Optional: drop a custom reference.docx in build/assets/ to control
+  # default styles, then re-enable the --reference-doc flag below.
   pandoc \
     --from=markdown --to=docx \
-    --reference-doc=build/assets/reference.docx \
     --bibliography=output/references.json \
     --output=output/manuscript.docx \
     output/manuscript.md
